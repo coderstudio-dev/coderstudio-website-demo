@@ -1,4 +1,4 @@
-name: Build and Push to GHCR with BuildX (Debug)
+name: Build and Push to GHCR with BuildX (OCI format)
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        push: false  # Set to false for debugging
+        push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
@@ -57,20 +57,25 @@ jobs:
           SMTP_FROM=${{ secrets.SMTP_FROM }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        outputs: type=docker,dest=/tmp/image.tar
+        outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
 
-    - name: Upload artifact
+    - name: Export digest
+      if: github.event_name != 'pull_request'
+      run: |
+        mkdir -p /tmp/digests
+        docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} --format '{{json .}}' > /tmp/digests/digest.json
+
+    - name: Upload digest
+      if: github.event_name != 'pull_request'
       uses: actions/upload-artifact@v3
       with:
-        name: docker-image
-        path: /tmp/image.tar
-
-    - name: Load image
-      run: |
-        docker load --input /tmp/image.tar
-        docker image ls -a
+        name: digests
+        path: /tmp/digests/digest.json
+        if-no-files-found: error
 
     - name: Debug
+      if: github.event_name != 'pull_request'
       run: |
-        docker run --rm $(docker images -q | head -n 1) cat /app/.next/build-manifest.json
-        docker run --rm $(docker images -q | head -n 1) cat /app/.next/server/pages-manifest.json
+        docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} cat /app/.next/build-manifest.json
+        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} cat /app/.next/server/pages-manifest.json
