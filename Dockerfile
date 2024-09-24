@@ -1,45 +1,23 @@
-FROM node:18-alpine AS base
+# Use a base image that supports multi-platform builds
+FROM --platform=$BUILDPLATFORM node:18-alpine AS builder
 
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy package.json and yarn.lock
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Copy the rest of the application code
 COPY . .
 
-ARG SMTP_HOST
-ARG SMTP_PORT
-ARG SMTP_SECURE
-ARG SMTP_USER
-ARG SMTP_PASS
-ARG SMTP_FROM
+# Build the Next.js application
+RUN yarn build
 
-ENV SMTP_HOST=${SMTP_HOST}
-ENV SMTP_PORT=${SMTP_PORT}
-ENV SMTP_SECURE=${SMTP_SECURE}
-ENV SMTP_USER=${SMTP_USER}
-ENV SMTP_PASS=${SMTP_PASS}
-ENV SMTP_FROM=${SMTP_FROM}
+# Production image, copy all the files and run next
+FROM --platform=$TARGETPLATFORM node:18-alpine AS runner
 
-# Print debugging information
-RUN echo "Node version: $(node -v)" && \
-    echo "NPM version: $(npm -v)" && \
-    echo "Yarn version: $(yarn --version)" && \
-    echo "Next.js version: $(npm list next)"
-
-# Build the application with verbose output
-RUN yarn build --verbose
-
-FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -47,7 +25,10 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy necessary files from builder stage
+COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
