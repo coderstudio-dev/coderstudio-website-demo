@@ -30,11 +30,14 @@ ENV SMTP_USER=${SMTP_USER}
 ENV SMTP_PASS=${SMTP_PASS}
 ENV SMTP_FROM=${SMTP_FROM}
 
-# Print Next.js and Node versions for debugging
-RUN echo "Node version: $(node -v)" && echo "Next.js version: $(npm list next)"
+# Print debugging information
+RUN echo "Node version: $(node -v)" && \
+    echo "NPM version: $(npm -v)" && \
+    echo "Yarn version: $(yarn --version)" && \
+    echo "Next.js version: $(npm list next)"
 
-# Verbose build with debugging information
-RUN yarn build --debug
+# Build the application with verbose output
+RUN yarn build --verbose
 
 FROM base AS runner
 WORKDIR /app
