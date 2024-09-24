@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
 async function detectBot(req: Request): Promise<boolean> {
   const userAgent = req.headers.get("user-agent");
-  const ipAddress = req.headers.get("x-forwarded-for") || "unknown";
+//   const ipAddress = req.headers.get("x-forwarded-for") || "unknown";
 
   // Implement your bot detection logic here
   // This is a simple example and should be expanded for production use

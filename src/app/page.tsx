@@ -9,9 +9,9 @@ import {
   Lock,
   Zap,
   Code,
-  Server,
+//   Server,
   Globe,
-  Rocket,
+//   Rocket,
   Users,
   Terminal,
   Box,
@@ -200,7 +200,7 @@ export default function Home() {
                 Get in Touch
               </h2>
               <p className="mx-auto max-w-[600px] text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Ready to revolutionize your IT infrastructure? Let's discuss how
+                Ready to revolutionize your IT infrastructure? Let&apos;s discuss how
                 our team of tech experts can elevate your business with
                 affordable, enterprise-grade IT solutions.
               </p>
@@ -321,7 +321,7 @@ function ContactForm() {
         setStatus(`Failed to send message: ${error}`);
       }
     } catch (error) {
-      setStatus("An error occurred. Please try again later.");
+      setStatus("An error occurred. Please try again later.\n" + error);
     }
   };
 
