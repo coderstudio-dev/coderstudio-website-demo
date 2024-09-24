@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:18-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
@@ -23,14 +23,18 @@ ARG SMTP_USER
 ARG SMTP_PASS
 ARG SMTP_FROM
 
-ENV SMTP_HOST=$SMTP_HOST
-ENV SMTP_PORT=$SMTP_PORT
-ENV SMTP_SECURE=$SMTP_SECURE
-ENV SMTP_USER=$SMTP_USER
-ENV SMTP_PASS=$SMTP_PASS
-ENV SMTP_FROM=$SMTP_FROM
+ENV SMTP_HOST=${SMTP_HOST}
+ENV SMTP_PORT=${SMTP_PORT}
+ENV SMTP_SECURE=${SMTP_SECURE}
+ENV SMTP_USER=${SMTP_USER}
+ENV SMTP_PASS=${SMTP_PASS}
+ENV SMTP_FROM=${SMTP_FROM}
 
-RUN yarn build
+# Print Next.js and Node versions for debugging
+RUN echo "Node version: $(node -v)" && echo "Next.js version: $(npm list next)"
+
+# Verbose build with debugging information
+RUN yarn build --debug
 
 FROM base AS runner
 WORKDIR /app
