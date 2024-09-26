@@ -70,7 +70,7 @@ async function sendEmail(name: string, email: string, message: string) {
   await transporter.sendMail({
     from: process.env.SMTP_FROM,
     to: "info@coderstudio.co",
-    subject: "New Contact Form Submission",
+    subject: "From Website Service Inquiry",
     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p>`,
   });

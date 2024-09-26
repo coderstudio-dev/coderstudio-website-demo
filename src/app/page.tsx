@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,82 +9,151 @@ import {
   Lock,
   Zap,
   Code,
-//   Server,
   Globe,
-//   Rocket,
   Users,
   Terminal,
   Box,
+  Menu,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import logo from "./coderstudio-logo.svg";
 
+interface ContactFormProps {
+  emailInputRef: React.RefObject<HTMLInputElement>;
+  initialEmail: string;
+}
+
 export default function Home() {
+  const [heroEmail, setHeroEmail] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const contactRef = useRef<HTMLDivElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  const handleGetStarted = (e: React.FormEvent) => {
+    e.preventDefault();
+    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (heroEmail && emailInputRef.current) {
+      emailInputRef.current.value = heroEmail;
+    }
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">
-      <header className="px-4 lg:px-6 h-20 flex items-center border-b border-gray-800 sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm">
-        <a className="flex" href="#home">
-          <Image className="h-16 w-auto" src={logo} alt="Home"/>
+      <header className="px-4 lg:px-6 h-20 flex items-center justify-between border-b border-gray-800 sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm">
+        <a className="flex items-center" href="#home">
+          <Image className="h-16 w-auto" src={logo} alt="Home" />
         </a>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="hidden md:flex gap-4 sm:gap-6">
           <a
-            className="text-sm font-medium hover:text-blue-400 transition-colors"
+            className="text-base font-medium hover:text-blue-400 transition-colors"
             href="#services"
           >
             Services
           </a>
           <a
-            className="text-sm font-medium hover:text-blue-400 transition-colors"
+            className="text-base font-medium hover:text-blue-400 transition-colors"
             href="#about"
           >
             About
           </a>
           <a
-            className="text-sm font-medium hover:text-blue-400 transition-colors"
+            className="text-base font-medium hover:text-blue-400 transition-colors"
             href="#mission"
           >
             Mission
           </a>
           <a
-            className="text-sm font-medium hover:text-blue-400 transition-colors"
+            className="text-base font-medium hover:text-blue-400 transition-colors"
             href="#contact"
           >
             Contact
           </a>
         </nav>
+        <button className="md:hidden" onClick={toggleMenu}>
+          {isMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
       </header>
+      {isMenuOpen && (
+        <div className="md:hidden bg-gray-900 py-4">
+          <nav className="flex flex-col items-center gap-4">
+            <a
+              className="text-base font-medium hover:text-blue-400 transition-colors"
+              href="#services"
+              onClick={closeMenu}
+            >
+              Services
+            </a>
+            <a
+              className="text-base font-medium hover:text-blue-400 transition-colors"
+              href="#about"
+              onClick={closeMenu}
+            >
+              About
+            </a>
+            <a
+              className="text-base font-medium hover:text-blue-400 transition-colors"
+              href="#mission"
+              onClick={closeMenu}
+            >
+              Mission
+            </a>
+            <a
+              className="text-base font-medium hover:text-blue-400 transition-colors"
+              href="#contact"
+              onClick={closeMenu}
+            >
+              Contact
+            </a>
+          </nav>
+        </div>
+      )}
       <main className="flex-1">
         <section
           id="home"
           className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-gray-900 to-gray-800"
         >
           <div className="container px-4 md:px-6 mx-auto">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-7xl/none bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
+            <div className="flex flex-col items-center space-y-8 text-center">
+              <div className="space-y-8">
+                <h1 className="text-5xl font-bold sm:text-4xl md:text-5xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 max-w-[1200px]">
                   Powering SMEs with Cutting-Edge IT Solutions
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-2xl/relaxed">
+                <p className="mx-auto max-w-[700px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-2xl/relaxed">
                   Affordable, comprehensive IT and digital transformation
                   services tailored for forward-thinking enterprises.
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
+                <form onSubmit={handleGetStarted} className="flex space-x-2">
                   <Input
-                    className="max-w-lg flex-1 bg-gray-800 border-gray-700"
+                    className="max-w-lg flex-1 bg-gray-800 border-gray-700 text-base"
                     placeholder="Enter your email"
                     type="email"
+                    value={heroEmail}
+                    onChange={(e) => setHeroEmail(e.target.value)}
                   />
                   <Button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 text-base"
                   >
                     Get Started
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </form>
-                <p className="text-xs text-gray-400">
+                <p className="text-base text-gray-400">
                   Embark on your digital transformation journey. No strings
                   attached.
                 </p>
@@ -97,7 +166,7 @@ export default function Home() {
           className="w-full py-12 md:py-24 lg:py-32 bg-gray-800"
         >
           <div className="container px-4 md:px-6 mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12 text-white">
+            <h2 className="text-4xl font-bold text-center mb-12 text-white">
               Our Services
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -140,11 +209,11 @@ export default function Home() {
         >
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">
-                About TechNex Solutions
+              <h2 className="text-4xl font-bold tracking-tighter md:text-4xl/tight text-white">
+                About CoderStudio Labs
               </h2>
-              <p className="mx-auto max-w-[700px] text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                TechNex Solutions is a fully remote, distributed startup
+              <p className="mx-auto max-w-[700px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                CoderStudio Labs is a fully remote, distributed startup
                 providing affordable, comprehensive IT and digital
                 transformation services tailored for small and medium-sized
                 enterprises (SMEs). Our mission is to empower SMEs with
@@ -174,7 +243,7 @@ export default function Home() {
         >
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">
+              <h2 className="text-4xl font-bold tracking-tighter md:text-4xl/tight text-white">
                 Our Mission & Vision
               </h2>
               <div className="grid md:grid-cols-2 gap-8 mt-8">
@@ -192,54 +261,58 @@ export default function Home() {
         </section>
         <section
           id="contact"
+          ref={contactRef}
           className="w-full py-12 md:py-24 lg:py-32 bg-gray-900"
         >
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">
+              <h2 className="text-4xl font-bold tracking-tighter md:text-4xl/tight text-white">
                 Get in Touch
               </h2>
-              <p className="mx-auto max-w-[600px] text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Ready to revolutionize your IT infrastructure? Let&apos;s discuss how
+              <p className="mx-auto max-w-[600px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Ready to revolutionize your IT infrastructure? Let's discuss how
                 our team of tech experts can elevate your business with
                 affordable, enterprise-grade IT solutions.
               </p>
-              <ContactForm />
+              <ContactForm
+                emailInputRef={emailInputRef}
+                initialEmail={heroEmail}
+              />
             </div>
           </div>
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-800">
-        <p className="text-xs text-gray-400">
-          © 2023 TechNex Solutions. All rights reserved.
+        <p className="text-base text-gray-400">
+          © 2024 CoderStudio Labs. All rights reserved.
         </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <a
-            className="text-xs hover:text-blue-400 transition-colors"
+            className="text-base hover:text-blue-400 transition-colors"
             href="#home"
           >
             Home
           </a>
           <a
-            className="text-xs hover:text-blue-400 transition-colors"
+            className="text-base hover:text-blue-400 transition-colors"
             href="#services"
           >
             Services
           </a>
           <a
-            className="text-xs hover:text-blue-400 transition-colors"
+            className="text-base hover:text-blue-400 transition-colors"
             href="#about"
           >
             About
           </a>
           <a
-            className="text-xs hover:text-blue-400 transition-colors"
+            className="text-base hover:text-blue-400 transition-colors"
             href="#mission"
           >
             Mission
           </a>
           <a
-            className="text-xs hover:text-blue-400 transition-colors"
+            className="text-base hover:text-blue-400 transition-colors"
             href="#contact"
           >
             Contact
@@ -261,7 +334,7 @@ function ServiceCard({ icon, title, description }: ServiceCardProps) {
     <div className="bg-gray-900 rounded-lg p-6 shadow-lg hover:shadow-blue-500/10 transition-shadow">
       {icon}
       <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-gray-400">{description}</p>
+      <p className="text-gray-400 text-base">{description}</p>
     </div>
   );
 }
@@ -275,7 +348,7 @@ function FeatureItem({ icon, text }: FeatureItemProps) {
   return (
     <div className="flex items-center space-x-2">
       {icon}
-      <span className="text-gray-300">{text}</span>
+      <span className="text-gray-300 text-base">{text}</span>
     </div>
   );
 }
@@ -289,16 +362,26 @@ function MissionVisionCard({ title, description }: MissionVisionCardProps) {
   return (
     <div className="bg-gray-900 rounded-lg p-6 shadow-lg">
       <h3 className="text-2xl font-bold text-blue-400 mb-4">{title}</h3>
-      <p className="text-gray-300">{description}</p>
+      <p className="text-gray-300 text-base">{description}</p>
     </div>
   );
 }
 
-function ContactForm() {
+function ContactForm({ emailInputRef, initialEmail }: ContactFormProps) {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    if (emailInputRef.current) {
+      emailInputRef.current.value = email;
+    }
+  }, [email, emailInputRef]);
+
+  useEffect(() => {
+    setEmail(initialEmail);
+  }, [initialEmail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -328,7 +411,7 @@ function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4 mt-8">
       <Input
-        className="w-full bg-gray-800 border-gray-700"
+        className="w-full bg-gray-800 border-gray-700 text-base"
         placeholder="Your Name"
         type="text"
         value={name}
@@ -336,24 +419,28 @@ function ContactForm() {
         required
       />
       <Input
-        className="w-full bg-gray-800 border-gray-700"
+        className="w-full bg-gray-800 border-gray-700 text-base"
         placeholder="Your Email"
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
+        ref={emailInputRef}
       />
       <textarea
-        className="w-full h-32 px-3 py-2 text-gray-300 bg-gray-800 border border-gray-700 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full h-32 px-3 py-2 text-gray-300 bg-gray-800 border border-gray-700 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
         placeholder="Your Message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         required
       ></textarea>
-      <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-700 text-base"
+        size="lg"
+      >
         Send Message
       </Button>
-      {status && <p className="text-center text-sm">{status}</p>}
+      {status && <p className="text-center text-base">{status}</p>}
     </form>
   );
 }
