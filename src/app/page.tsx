@@ -270,7 +270,7 @@ export default function Home() {
                 Get in Touch
               </h2>
               <p className="mx-auto max-w-[600px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Ready to revolutionize your IT infrastructure? Let's discuss how
+                Ready to revolutionize your IT infrastructure? Let&apos;s discuss how
                 our team of tech experts can elevate your business with
                 affordable, enterprise-grade IT solutions.
               </p>

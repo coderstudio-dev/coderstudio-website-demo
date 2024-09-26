@@ -37,11 +37,6 @@ ENV SMTP_USER=${SMTP_USER}
 ENV SMTP_PASS=${SMTP_PASS}
 ENV SMTP_FROM=${SMTP_FROM}
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
 RUN npm run build
 
 # Production image, copy all the files and run next
@@ -62,18 +57,17 @@ ENV SMTP_FROM=${SMTP_FROM}
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files
+# Copy necessary files and directories
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
 COPY --from=builder /app/next.config.js ./next.config.js
-
-# Conditionally copy the public directory if it exists
-# RUN mkdir -p ./public
 # COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
 
-# Copy .next directory
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+# Install production dependencies
+RUN npm ci --only=production
 
-# Change ownership of the .next directory
+# Change ownership of the app directory
 RUN chown -R nextjs:nodejs .
 
 USER nextjs
