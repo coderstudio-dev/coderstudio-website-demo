@@ -48,7 +48,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">
-      <header className="px-4 lg:px-6 h-20 flex items-center justify-between border-b border-gray-800 sticky top-0 z-10 bg-gray-900/80 backdrop-blur-sm">
+      <header className="fixed top-0 left-0 right-0 px-4 lg:px-6 h-20 flex items-center justify-between border-b border-gray-800 z-[1000] bg-gray-900/80 backdrop-blur-sm">
         <a className="flex items-center" href="#home">
           <Image className="h-16 w-auto" src={logo} alt="Home" />
         </a>
@@ -78,7 +78,7 @@ export default function Home() {
             Contact
           </a>
         </nav>
-        <button className="md:hidden" onClick={toggleMenu}>
+        <button className="md:hidden z-50" onClick={toggleMenu}>
           {isMenuOpen ? (
             <X className="h-6 w-6" />
           ) : (
@@ -86,49 +86,51 @@ export default function Home() {
           )}
         </button>
       </header>
-      {isMenuOpen && (
-        <div className="md:hidden bg-gray-900 py-4">
-          <nav className="flex flex-col items-center gap-4">
-            <a
-              className="text-base font-medium hover:text-blue-400 transition-colors"
-              href="#services"
-              onClick={closeMenu}
-            >
-              Services
-            </a>
-            <a
-              className="text-base font-medium hover:text-blue-400 transition-colors"
-              href="#about"
-              onClick={closeMenu}
-            >
-              About
-            </a>
-            <a
-              className="text-base font-medium hover:text-blue-400 transition-colors"
-              href="#mission"
-              onClick={closeMenu}
-            >
-              Mission
-            </a>
-            <a
-              className="text-base font-medium hover:text-blue-400 transition-colors"
-              href="#contact"
-              onClick={closeMenu}
-            >
-              Contact
-            </a>
-          </nav>
-        </div>
-      )}
-      <main className="flex-1">
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-gray-900/80 backdrop-blur-sm transform transition-transform duration-300 ease-in-out z-[999] ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        } md:hidden`}
+      >
+        <nav className="flex flex-col items-end p-8 mt-20 gap-4">
+          <a
+            className="text-base font-medium hover:text-blue-400 transition-colors"
+            href="#services"
+            onClick={closeMenu}
+          >
+            Services
+          </a>
+          <a
+            className="text-base font-medium hover:text-blue-400 transition-colors"
+            href="#about"
+            onClick={closeMenu}
+          >
+            About
+          </a>
+          <a
+            className="text-base font-medium hover:text-blue-400 transition-colors"
+            href="#mission"
+            onClick={closeMenu}
+          >
+            Mission
+          </a>
+          <a
+            className="text-base font-medium hover:text-blue-400 transition-colors"
+            href="#contact"
+            onClick={closeMenu}
+          >
+            Contact
+          </a>
+        </nav>
+      </div>
+      <main className="flex-1 mt-20">
         <section
           id="home"
           className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-gray-900 to-gray-800"
         >
           <div className="container px-4 md:px-6 mx-auto">
-            <div className="flex flex-col items-center space-y-8 text-center">
-              <div className="space-y-8">
-                <h1 className="text-5xl font-bold sm:text-4xl md:text-5xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 max-w-[1200px]">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-5xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/[1.3] bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 mb-6 max-w-[1100px] mx-auto">
                   Powering SMEs with Cutting-Edge IT Solutions
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-2xl/relaxed">
@@ -210,7 +212,7 @@ export default function Home() {
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <h2 className="text-4xl font-bold tracking-tighter md:text-4xl/tight text-white">
-                About CoderStudio Labs
+                About CoderStudio
               </h2>
               <p className="mx-auto max-w-[700px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 CoderStudio Labs is a fully remote, distributed startup
@@ -270,9 +272,9 @@ export default function Home() {
                 Get in Touch
               </h2>
               <p className="mx-auto max-w-[600px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Ready to revolutionize your IT infrastructure? Let&apos;s discuss how
-                our team of tech experts can elevate your business with
-                affordable, enterprise-grade IT solutions.
+                Ready to revolutionize your IT infrastructure? Let&apos;s
+                discuss how our team of tech experts can elevate your business
+                with affordable, enterprise-grade IT solutions.
               </p>
               <ContactForm
                 emailInputRef={emailInputRef}
