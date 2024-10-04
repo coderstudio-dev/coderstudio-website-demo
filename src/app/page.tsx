@@ -135,7 +135,7 @@ export default function Home() {
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-400 text-base md:text-xl/relaxed lg:text-base/relaxed xl:text-2xl/relaxed">
                   Affordable, comprehensive IT and digital transformation
-                  services tailored for forward-thinking enterprises.
+                  services tailored for forward-thinking enterprises. Demo
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
